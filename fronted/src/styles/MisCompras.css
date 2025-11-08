@@ -1,0 +1,41 @@
+/* /frontend/src/styles/MisCompras.css */
+
+.compras-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.compra-card {
+  background-color: var(--background-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.compra-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.compra-card-header h3 {
+  margin: 0;
+  color: var(--primary-accent);
+  font-size: 1.4rem;
+}
+
+.compra-total {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.compra-card-body p {
+  margin: 0.5rem 0;
+  color: var(--text-secondary);
+}

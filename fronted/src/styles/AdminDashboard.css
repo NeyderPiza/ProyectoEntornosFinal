@@ -1,0 +1,79 @@
+/* /frontend/src/components/AdminDashboard.css */
+
+.admin-dashboard {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.message {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+.message.success { background-color: #2a9d8f; color: white; }
+.message.error { background-color: #e76f51; color: white; }
+
+.management-section {
+    background-color: #3a3f4a;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+}
+.management-section h2 {
+    margin-top: 0;
+    border-bottom: 1px solid #4a505c;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.management-form {
+    background-color: #4a505c;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.management-form h3 { margin-top: 0; }
+.management-form input, 
+.management-form select,
+.management-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: none;
+    box-sizing: border-box;
+    background-color: #e9ecef;
+    color: #343a40;
+}
+.management-form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.form-buttons { display: flex; gap: 10px; margin-top: 10px; }
+.form-buttons button { flex-grow: 1; }
+.form-buttons button[type="button"] { background-color: #6c757d; }
+
+.data-list { list-style: none; padding: 0; }
+.data-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #4a505c;
+}
+.data-list li:last-child { border-bottom: none; }
+.data-list div { display: flex; gap: 10px; }
+.data-list button { background-color: #f8f9fa; color: #212529; }
+.data-list button.delete { background-color: #e63946; color: white; }
+
+.list-poster-img {
+    width: 40px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 15px;
+}

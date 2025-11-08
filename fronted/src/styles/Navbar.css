@@ -1,0 +1,44 @@
+
+/* /frontend/src/styles/Navbar.css */
+
+.public-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--background-light);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-logo-public {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.public-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.public-nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s ease-in-out;
+}
+
+.public-nav-links a:hover,
+.public-nav-links a.active {
+    color: var(--primary-accent);
+}
+
+.nav-button-public {
+    background-color: var(--primary-accent);
+    color: white;
+}
+.nav-button-public:hover {
+    background-color: var(--primary-hover);
+}

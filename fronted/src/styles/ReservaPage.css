@@ -1,0 +1,52 @@
+/* /frontend/src/styles/ReservaPage.css */
+.reserva-container { text-align: center; }
+.reserva-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+.reserva-header h3 { font-size: 1.5rem; color: var(--primary-accent); margin-top: 0; }
+.reserva-header p { color: var(--text-secondary); }
+
+.sala-cine { margin: 3rem 0; perspective: 1000px; }
+.screen {
+  background-color: #fff;
+  color: black;
+  padding: 5px 0;
+  margin: 0 auto 2rem auto;
+  width: 60%;
+  border-radius: 3px;
+  box-shadow: 0 3px 10px rgba(255, 255, 255, 0.7);
+  transform: rotateX(-45deg);
+}
+
+.seats-grid { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.seat-row { display: flex; align-items: center; gap: 10px; }
+.row-letter { width: 20px; text-align: right; color: var(--text-secondary); }
+.seat {
+  width: 30px; height: 30px;
+  background-color: #444;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+}
+.seat.disponible:hover { background-color: #666; }
+.seat.seleccionado { background-color: var(--primary-accent); }
+.seat.ocupado { background-color: var(--background-dark); cursor: not-allowed; border: 1px solid var(--border-color); }
+
+.leyenda { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; }
+.leyenda-item { display: flex; align-items: center; gap: 0.5rem; }
+.leyenda-item .seat { cursor: default; }
+
+.reserva-summary {
+  background-color: var(--background-light);
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 2rem auto;
+}
+.reserva-summary h4 { margin-top: 0; font-size: 1.5rem; }
+.reserva-summary button { width: 100%; font-size: 1.2rem; margin-top: 1rem; }
+.reserva-summary button:disabled { background-color: #555; cursor: not-allowed; }

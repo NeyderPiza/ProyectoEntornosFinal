@@ -1,0 +1,29 @@
+/* /frontend/src/styles/PeliculaDetalle.css */
+
+.detalle-container { color: var(--text-primary); }
+.detalle-header { display: flex; gap: 3rem; margin-bottom: 3rem; }
+.detalle-poster img { width: 300px; border-radius: 8px; box-shadow: 0 5px 25px rgba(0,0,0,0.3); }
+.detalle-info h1 { font-size: 3rem; margin-top: 0; margin-bottom: 1.5rem; color: var(--primary-accent); }
+.detalle-info .sinopsis { font-size: 1.1rem; line-height: 1.7; color: var(--text-secondary); max-width: 80ch; }
+.info-tags { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin-top: 2rem; font-size: 0.9rem; }
+.info-tags span { background-color: var(--background-light); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid var(--border-color); }
+
+.funciones-section { margin-top: 4rem; }
+.funciones-section h2 { font-size: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 2rem; }
+.ciudad-group { margin-bottom: 2.5rem; }
+.ciudad-group h3 { font-size: 1.5rem; color: var(--primary-accent); margin-bottom: 1.5rem; }
+
+.horarios-grid { display: flex; flex-wrap: wrap; gap: 1rem; }
+.horario-box {
+  background-color: var(--background-light);
+  border: 1px solid var(--border-color);
+  padding: 1rem 1.5rem;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.horario-box:hover { background-color: var(--primary-accent); border-color: var(--primary-accent); transform: translateY(-3px); }
+.horario-box .hora { display: block; font-size: 1.2rem; font-weight: bold; color: var(--text-primary); }
+.horario-box .sala { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; }
+.horario-box:hover .hora, .horario-box:hover .sala { color: white; }

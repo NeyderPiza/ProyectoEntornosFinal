@@ -1,0 +1,17 @@
+# Archivo de variables de entorno (¡MUY IMPORTANTE!)
+# Contiene las credenciales de la base de datos y otros secretos.
+.env
+
+# Dependencias de Node.js
+# Estas carpetas pueden pesar cientos de megabytes y se pueden reinstalar
+# con 'npm install' en cualquier momento.
+/node_modules
+/frontend/node_modules
+/backend/node_modules
+
+# Archivos de log
+*.log
+
+# Archivos generados por el sistema operativo
+.DS_Store
+Thumbs.db
