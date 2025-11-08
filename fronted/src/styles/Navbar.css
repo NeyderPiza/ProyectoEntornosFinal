@@ -1,44 +1,76 @@
+/* /frontend/styles/Navbar.css */
 
-/* /frontend/src/styles/Navbar.css */
+.navbar {
+    background-color: #1c1c1e;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    border-bottom: 1px solid #333;
+}
 
-.public-navbar {
+.navbar-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
-    background-color: var(--background-light);
-    border-bottom: 1px solid var(--border-color);
+    height: 80px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 24px;
 }
 
-.nav-logo-public {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--text-primary);
+.navbar-logo {
+    color: #fff;
+    justify-self: start;
+    cursor: pointer;
     text-decoration: none;
+    font-size: 2rem;
+    font-weight: bold;
 }
 
-.public-nav-links {
+.nav-menu {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    list-style: none;
+    text-align: center;
+    margin: 0;
+    padding: 0;
 }
 
-.public-nav-links a {
-    color: var(--text-secondary);
+.nav-item {
+    height: 80px;
+    display: flex;
+    align-items: center;
+}
+
+.nav-links {
+    color: #fff;
     text-decoration: none;
-    font-weight: bold;
-    transition: color 0.2s ease-in-out;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease-out;
 }
 
-.public-nav-links a:hover,
-.public-nav-links a.active {
-    color: var(--primary-accent);
+.nav-links:hover {
+    color: #00e0e0;
 }
 
-.nav-button-public {
-    background-color: var(--primary-accent);
+.nav-button {
+    padding: 8px 20px;
+    border-radius: 4px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    background-color: #007bff;
     color: white;
+    font-size: 1rem;
+    margin-left: 1rem;
+    transition: background-color 0.2s ease-out;
 }
-.nav-button-public:hover {
-    background-color: var(--primary-hover);
+
+.nav-button:hover {
+    background-color: #0056b3;
 }
