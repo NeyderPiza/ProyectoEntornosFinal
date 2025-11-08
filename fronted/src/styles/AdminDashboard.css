@@ -1,79 +1,211 @@
-/* /frontend/src/components/AdminDashboard.css */
+/* /frontend/styles/AdminDashboard.css (NUEVA VERSIÓN VISUAL MEJORADA) */
 
+/* --- Contenedor Principal --- */
 .admin-dashboard {
-    padding: 20px;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 2rem auto;
+    padding: 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-.message {
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 5px;
+.admin-dashboard h1 {
     text-align: center;
-    font-weight: bold;
+    color: #e0e0e0;
+    font-size: 2.5rem;
+    margin-bottom: 2.5rem;
+    letter-spacing: 1px;
+    font-weight: 600;
 }
-.message.success { background-color: #2a9d8f; color: white; }
-.message.error { background-color: #e76f51; color: white; }
 
+/* --- Secciones de Gestión (Ciudades, Salas, etc.) --- */
 .management-section {
-    background-color: #3a3f4a;
-    padding: 20px;
-    margin-bottom: 30px;
-    border-radius: 8px;
-}
-.management-section h2 {
-    margin-top: 0;
-    border-bottom: 1px solid #4a505c;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+    background-color: #2c2f36; /* Un gris azulado más moderno */
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    border: 1px solid #3a3f4a;
 }
 
-.management-form {
-    background-color: #4a505c;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-.management-form h3 { margin-top: 0; }
-.management-form input, 
-.management-form select,
-.management-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    border: none;
-    box-sizing: border-box;
-    background-color: #e9ecef;
-    color: #343a40;
-}
-.management-form textarea {
-    min-height: 80px;
-    resize: vertical;
-}
-
-.form-buttons { display: flex; gap: 10px; margin-top: 10px; }
-.form-buttons button { flex-grow: 1; }
-.form-buttons button[type="button"] { background-color: #6c757d; }
-
-.data-list { list-style: none; padding: 0; }
-.data-list li {
+.management-section header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid #4a505c;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #3a3f4a;
+    padding-bottom: 1rem;
 }
-.data-list li:last-child { border-bottom: none; }
-.data-list div { display: flex; gap: 10px; }
-.data-list button { background-color: #f8f9fa; color: #212529; }
-.data-list button.delete { background-color: #e63946; color: white; }
 
-.list-poster-img {
-    width: 40px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-right: 15px;
+.management-section header h2 {
+    margin: 0;
+    color: #00aaff; /* Un azul vibrante para los títulos */
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+/* --- Estilos de la Tabla --- */
+.content-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.content-table th, .content-table td {
+    padding: 1rem 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #3a3f4a;
+    color: #c5c8d0; /* Texto más suave */
+}
+
+.content-table th {
+    color: #e0e0e0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.content-table tbody tr {
+    transition: background-color 0.2s ease-in-out;
+}
+
+.content-table tbody tr:hover {
+    background-color: #353941;
+}
+
+.content-table .actions {
+    display: flex;
+    gap: 1.2rem;
+    font-size: 1.1rem;
+}
+
+.content-table .actions svg { /* Apuntamos directamente al SVG de FontAwesome */
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.content-table .actions svg:hover {
+    transform: scale(1.2);
+}
+
+.content-table .actions .fa-edit:hover {
+    color: #00aaff; /* Azul */
+}
+
+.content-table .actions .fa-trash-alt:hover {
+    color: #ff4d4d; /* Rojo */
+}
+
+/* --- Estilos del Modal (La mejora principal) --- */
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 10, 10, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: #2c2f36;
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    border: 1px solid #3a3f4a;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-content h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 2rem;
+    font-weight: 500;
+}
+
+.close-modal-button {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    color: #888;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.close-modal-button:hover {
+    color: #fff;
+}
+
+/* --- Estilos del Formulario dentro del Modal --- */
+#modal-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+#modal-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #c5c8d0;
+    font-size: 0.9rem;
+}
+
+#modal-form input,
+#modal-form select,
+#modal-form textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #4a505c;
+    background-color: #22252a;
+    color: #e0e0e0;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#modal-form input:focus,
+#modal-form select:focus,
+#modal-form textarea:focus {
+    outline: none;
+    border-color: #00aaff;
+    box-shadow: 0 0 0 3px rgba(0, 170, 255, 0.2);
+}
+
+/* --- Botón Primario (Reutilizado) --- */
+.btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    transform: translateY(-2px);
+}
+
+#modal-form .btn-primary {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
 }
