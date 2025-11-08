@@ -56,6 +56,39 @@ app.get('/api/peliculas', async (req, res) => { try { const { rows } = await poo
 app.get('/api/peliculas/:id', async (req, res) => { try { const { rows } = await pool.query('SELECT * FROM Peliculas WHERE id = $1', [req.params.id]); if(rows.length === 0) return res.status(404).json({error: 'Película no encontrada'}); res.json(rows[0]); } catch (e) { res.status(500).json({ error: 'Error al obtener película.'})}});
 app.get('/api/peliculas/:id/funciones', async (req, res) => { try { const query = `SELECT f.id, f.fecha_hora, f.precio_boleto, s.nombre AS sala_nombre, c.nombre AS ciudad_nombre FROM Funciones f JOIN Salas s ON f.sala_id = s.id JOIN Ciudades c ON s.ciudad_id = c.id WHERE f.pelicula_id = $1 AND f.fecha_hora > NOW() ORDER BY c.nombre, f.fecha_hora ASC;`; const { rows } = await pool.query(query, [req.params.id]); res.json(rows); } catch (e) { res.status(500).json({ error: 'Error al obtener funciones.'})}});
 app.get('/api/funciones/:id/detalles', async (req, res) => { try { const fQuery = `SELECT f.id, f.fecha_hora, f.precio_boleto, p.titulo AS pelicula_titulo, p.url_poster, s.nombre AS sala_nombre, s.filas, s.columnas FROM Funciones f JOIN Peliculas p ON f.pelicula_id = p.id JOIN Salas s ON f.sala_id = s.id WHERE f.id = $1;`; const fRes = await pool.query(fQuery, [req.params.id]); if(fRes.rows.length === 0) return res.status(404).json({error: 'Función no encontrada'}); const aQuery = 'SELECT fila, numero FROM Asientos_Reservados WHERE funcion_id = $1'; const aRes = await pool.query(aQuery, [req.params.id]); res.json({ funcion: fRes.rows[0], asientosOcupados: aRes.rows }); } catch (e) { res.status(500).json({ error: 'Error al obtener detalles de función.'})}});
+app.get('/api/peliculas', async (req, res) => { 
+    try {
+        const { ciudadId } = req.query; // Leemos el parámetro de consulta ?ciudadId=
+        let query = '';
+        let params = [];
+
+        if (ciudadId) {
+            // Si nos piden una ciudad específica, la consulta es más compleja.
+            // Selecciona solo las películas (DISTINCT) que tienen al menos una función
+            // en una sala de la ciudad especificada.
+            query = `
+                SELECT DISTINCT p.* 
+                FROM Peliculas p
+                JOIN Funciones f ON p.id = f.pelicula_id
+                JOIN Salas s ON f.sala_id = s.id
+                WHERE s.ciudad_id = $1 AND f.fecha_hora > NOW()
+                ORDER BY p.titulo ASC
+            `;
+            params = [ciudadId];
+        } else {
+            // Si no se especifica ciudad, devolvemos todas las películas como antes.
+            query = 'SELECT * FROM Peliculas ORDER BY titulo ASC';
+        }
+
+        const { rows } = await pool.query(query, params);
+        res.json(rows);
+
+    } catch (e) { 
+        console.error("Error al obtener películas:", e);
+        res.status(500).json({ error: 'Error al obtener películas.' });
+    }
+});
+
 app.get('/api/ciudades-publicas', async (req, res) => {
     try {
         const { rows } = await pool.query('SELECT * FROM Ciudades ORDER BY nombre ASC');
