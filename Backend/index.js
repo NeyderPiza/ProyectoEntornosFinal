@@ -6,6 +6,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
+const { sendConfirmationEmail } = require('./services/emailService');
 
 const { verifyToken, checkAdmin } = require('./middleware/auth');
 
@@ -100,24 +101,22 @@ app.get('/api/ciudades-publicas', async (req, res) => {
 // --- 3. API PROTEGIDA (para usuarios logueados) ---
 // ¡¡¡AQUÍ ESTÁ LA CORRECCIÓN!!!
 app.post('/api/reservas', verifyToken, async (req, res) => {
-    const usuarioId = req.user.id; // Obtenemos el ID del usuario desde el token decodificado
+    const usuarioId = req.user.id;
     const { funcionId, asientos, totalPagado } = req.body;
 
     if (!funcionId || !asientos || asientos.length === 0) {
         return res.status(400).json({ error: "Faltan datos para la reserva." });
     }
 
-    const client = await pool.connect(); // Usamos una transacción para asegurar la integridad de los datos
+    const client = await pool.connect();
 
     try {
         await client.query('BEGIN');
         
-        // 1. Insertar la compra principal
         const compraQuery = 'INSERT INTO Compras (usuario_id, funcion_id, total_pagado) VALUES ($1, $2, $3) RETURNING id';
         const compraResult = await client.query(compraQuery, [usuarioId, funcionId, totalPagado]);
         const compraId = compraResult.rows[0].id;
         
-        // 2. Insertar cada asiento reservado, asociado a la compra
         const asientoQuery = 'INSERT INTO Asientos_Reservados (compra_id, funcion_id, fila, numero) VALUES ($1, $2, $3, $4)';
         for (const asiento of asientos) {
             const fila = asiento.charAt(0);
@@ -125,15 +124,45 @@ app.post('/api/reservas', verifyToken, async (req, res) => {
             await client.query(asientoQuery, [compraId, funcionId, fila, numero]);
         }
 
-        await client.query('COMMIT'); // Si todo sale bien, confirmamos la transacción
+        await client.query('COMMIT');
+        
+        // Enviamos la respuesta de éxito ANTES de intentar mandar el correo.
+        // Esto asegura que el frontend deje de "Procesar..." inmediatamente.
         res.status(201).json({ message: "Reserva realizada con éxito.", compraId: compraId });
+        
+        // AHORA, intentamos enviar el correo de forma asíncrona "en segundo plano".
+        // Si esto falla, el usuario no se verá afectado.
+        try {
+            const infoQuery = `
+                SELECT u.email, p.titulo, f.fecha_hora, s.nombre as sala_nombre
+                FROM Compras c JOIN Usuarios u ON c.usuario_id = u.id JOIN Funciones f ON c.funcion_id = f.id
+                JOIN Peliculas p ON f.pelicula_id = p.id JOIN Salas s ON f.sala_id = s.id
+                WHERE c.id = $1
+            `;
+            const infoResult = await pool.query(infoQuery, [compraId]);
+            const details = infoResult.rows[0];
+
+            const compraDetails = {
+                userEmail: details.email, peliculaTitulo: details.titulo, fechaFuncion: details.fecha_hora,
+                salaNombre: details.sala_nombre, asientos: asientos, totalPagado: totalPagado
+            };
+            
+            sendConfirmationEmail(compraDetails); // No usamos 'await' para que no bloquee
+
+        } catch (emailError) {
+            console.error("El envío de email post-compra falló:", emailError);
+        }
 
     } catch (error) {
-        await client.query('ROLLBACK'); // Si algo falla, revertimos todos los cambios
+        await client.query('ROLLBACK');
         console.error("Error en la transacción de reserva:", error);
-        res.status(500).json({ error: "No se pudo procesar la reserva." });
+        // Asegúrate de enviar una respuesta también en caso de error
+        if (!res.headersSent) {
+            res.status(500).json({ error: "No se pudo procesar la reserva." });
+        }
     } finally {
-        client.release(); // Liberamos la conexión
+        // Esta línea es CRUCIAL. Se asegura de que la conexión a la BD siempre se libere.
+        client.release();
     }
 });
 
