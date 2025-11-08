@@ -1,26 +1,45 @@
-// /frontend/src/components/PublicNavbar.jsx (CÓDIGO FINAL Y DINÁMICO)
+// /frontend/src/components/PublicNavbar.jsx (VERSIÓN FINAL CON LÓGICA DE ROL)
 
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import '../styles/Navbar.css'; // Reutilizamos los mismos estilos, ¡eficiente!
+import { jwtDecode } from 'jwt-decode'; // Necesitamos decodificar el token aquí también
+import '../styles/Navbar.css';
 
 function PublicNavbar() {
     const navigate = useNavigate();
-    const location = useLocation(); // Hook para detectar cambios en la URL
+    const location = useLocation();
 
-    // Usamos un estado para que el componente se re-renderice cuando cambie el token
+    // Creamos estados separados para el token y el rol del usuario
     const [token, setToken] = useState(localStorage.getItem('token'));
+    const [userRole, setUserRole] = useState(null);
 
-    // Este efecto escucha los cambios de ruta. Si el usuario navega a /login
-    // y luego vuelve, la barra se actualizará.
+    // Este efecto se ejecuta cada vez que la URL cambia o el token cambia
     useEffect(() => {
-        setToken(localStorage.getItem('token'));
-    }, [location]);
+        const currentToken = localStorage.getItem('token');
+        setToken(currentToken);
+
+        if (currentToken) {
+            try {
+                // Si hay un token, lo decodificamos y guardamos el rol en el estado
+                const decodedToken = jwtDecode(currentToken);
+                setUserRole(decodedToken.rol);
+            } catch (error) {
+                // Si el token es inválido, limpiamos todo
+                console.error("Token inválido en Navbar:", error);
+                localStorage.removeItem('token');
+                setToken(null);
+                setUserRole(null);
+            }
+        } else {
+            setUserRole(null);
+        }
+    }, [location]); // Se ejecuta cada vez que navegamos a una nueva página
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        setToken(null); // Actualiza el estado para que la UI cambie instantáneamente
-        navigate('/'); // Redirige al inicio
+        setToken(null);
+        setUserRole(null);
+        navigate('/');
     };
 
     return (
@@ -35,9 +54,20 @@ function PublicNavbar() {
                             Cartelera
                         </Link>
                     </li>
+
                     {token ? (
-                        // Menú para usuarios autenticados
+                        // --- MENÚ PARA USUARIOS AUTENTICADOS ---
                         <>
+                            {/* --- ¡AQUÍ ESTÁ LA LÓGICA CLAVE! --- */}
+                            {/* Si el rol del usuario es 'administrador', muestra este enlace */}
+                            {userRole === 'administrador' && (
+                                <li className="nav-item">
+                                    <Link to="/admin" className="nav-links admin-link">
+                                        Panel Admin
+                                    </Link>
+                                </li>
+                            )}
+
                             <li className="nav-item">
                                 <Link to="/mis-compras" className="nav-links">
                                     Mis Compras

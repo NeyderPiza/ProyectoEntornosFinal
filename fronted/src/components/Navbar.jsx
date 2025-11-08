@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'; // Importamos hooks adicionales
 import { Link, useNavigate, useLocation } from 'react--router-dom';
-import '../../styles/Navbar.css';
+import '../styles/Navbar.css';
 
 function Navbar() {
     const navigate = useNavigate();

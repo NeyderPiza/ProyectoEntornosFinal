@@ -1,63 +1,99 @@
-// /frontend/src/components/MovieList.jsx (VERSIÓN FINAL CORREGIDA)
+// /frontend/src/components/MovieList.jsx (VERSIÓN CON FILTROS)
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
-import '../styles/MovieList.css';
+import apiClient from '../api/axiosConfig';
+import '../styles/MovieList.css'; // Asumo que tienes un CSS, lo crearemos/modificaremos
 
 function MovieList() {
-  const [peliculas, setPeliculas] = useState([]);
-  const [loading, setLoading] = useState(true); // Estado para saber si estamos cargando
-  const [error, setError] = useState(null);
+    // Estados para los datos originales
+    const [allMovies, setAllMovies] = useState([]);
+    
+    // Estados para los filtros
+    const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    const obtenerPeliculas = async () => {
-      try {
-        setLoading(true); // Empezamos a cargar
-        const respuesta = await axios.get('http://localhost:5000/api/peliculas');
-        setPeliculas(respuesta.data);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching movies:", err); // Log del error para depuración
-        setError("No se pudieron cargar las películas en este momento.");
-      } finally {
-        setLoading(false); // Terminamos de cargar (con o sin error)
-      }
-    };
-    obtenerPeliculas();
-  }, []); // El array vacío asegura que se ejecute solo una vez
+    // Estado para los datos que se van a mostrar (ya filtrados)
+    const [filteredMovies, setFilteredMovies] = useState([]);
+    
+    // Estados de UI
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
-  // Mostramos un mensaje mientras los datos cargan
-  if (loading) {
-    return <div className="loading-message">Cargando cartelera...</div>;
-  }
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Hacemos ambas peticiones en paralelo para más eficiencia
+                const moviesResponse = await apiClient.get('/peliculas');
+                setAllMovies(moviesResponse.data);
+                setFilteredMovies(moviesResponse.data); // Inicialmente, mostramos todas
+            } catch (err) {
+                setError('No se pudieron cargar las películas. Inténtalo de nuevo más tarde.');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  // Mostramos un mensaje de error si la petición falló
-  if (error) {
-    return <p className="error-message">{error}</p>;
-  }
+        fetchData();
+    }, []);
 
-  return (
-    <div className="movie-grid-container">
-      <h2>En Cartelera</h2>
-      
-      <div className="movie-grid">
-        {peliculas.map(pelicula => (
-          // La 'key' debe estar en el elemento más externo del bucle, en este caso, el Link.
-          <Link to={`/pelicula/${pelicula.id}`} key={pelicula.id} className="movie-card-link">
-            <div className="movie-card">
-              <div className="movie-card-poster">
-                <img src={pelicula.url_poster || 'https://via.placeholder.com/300x450'} alt={`Póster de ${pelicula.titulo}`} />
-              </div>
-              <div className="movie-card-content">
-                <h3>{pelicula.titulo}</h3>
-              </div>
+    // Este efecto se ejecuta cada vez que el término de búsqueda cambia
+    useEffect(() => {
+        let movies = [...allMovies];
+
+        // 1. Filtrar por término de búsqueda
+        if (searchTerm) {
+            movies = movies.filter(movie =>
+                movie.titulo.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        setFilteredMovies(movies);
+    }, [searchTerm, allMovies]);
+
+
+    if (loading) {
+        return <div className="loading-message">Cargando cartelera...</div>;
+    }
+
+    if (error) {
+        return <div className="error-message">{error}</div>;
+    }
+
+    return (
+        <div className="movielist-container">
+            <h1>En Cartelera</h1>
+
+            {/* --- SECCIÓN DE FILTROS --- */}
+            <div className="filters-container">
+                <input
+                    type="text"
+                    placeholder="Busca por título..."
+                    className="search-input"
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                />
             </div>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
+
+            {/* --- GRID DE PELÍCULAS --- */}
+            {filteredMovies.length > 0 ? (
+                <div className="movie-grid">
+                    {filteredMovies.map(pelicula => (
+                        <div key={pelicula.id} className="movie-card">
+                            <Link to={`/pelicula/${pelicula.id}`}>
+                                <img src={pelicula.url_poster} alt={`Póster de ${pelicula.titulo}`} />
+                                <div className="movie-card-title">{pelicula.titulo}</div>
+                            </Link>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="no-results">
+                    <p>No se encontraron películas que coincidan con tu búsqueda.</p>
+                </div>
+            )}
+        </div>
+    );
 }
 
 export default MovieList;

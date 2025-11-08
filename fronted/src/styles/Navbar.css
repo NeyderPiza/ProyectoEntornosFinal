@@ -74,3 +74,16 @@
 .nav-button:hover {
     background-color: #0056b3;
 }
+
+/* /frontend/styles/Navbar.css (Añadir al final) */
+
+.admin-link {
+    background-color: #3a3a3c;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #00e0e0 !important; /* Usamos !important para asegurar que sobrescriba el color base */
+}
+
+.admin-link:hover {
+    background-color: #4a4a4c;
+}
