@@ -1,52 +1,203 @@
-/* /frontend/src/styles/ReservaPage.css */
-.reserva-container { text-align: center; }
-.reserva-header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-.reserva-header h3 { font-size: 1.5rem; color: var(--primary-accent); margin-top: 0; }
-.reserva-header p { color: var(--text-secondary); }
+/* /frontend/styles/ReservaPage.css (NUEVA VERSIÓN CINEMATOGRÁFICA) */
 
-.sala-cine { margin: 3rem 0; perspective: 1000px; }
+/* --- Contenedor Principal y Ambiente --- */
+.reserva-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    color: #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* --- Encabezado de la Reserva --- */
+.reserva-header {
+    text-align: center;
+}
+
+.reserva-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.reserva-header h3 {
+    font-size: 1.8rem;
+    color: #00aaff; /* Color neón para el título de la película */
+    margin: 0;
+    text-shadow: 0 0 10px rgba(0, 170, 255, 0.7);
+}
+
+.reserva-header p {
+    color: #a0a8b8;
+    font-size: 1rem;
+}
+
+/* --- La Sala de Cine: Pantalla y Asientos --- */
+.sala-cine {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* La PANTALLA con efecto de brillo */
 .screen {
-  background-color: #fff;
-  color: black;
-  padding: 5px 0;
-  margin: 0 auto 2rem auto;
-  width: 60%;
-  border-radius: 3px;
-  box-shadow: 0 3px 10px rgba(255, 255, 255, 0.7);
-  transform: rotateX(-45deg);
+    width: 60%;
+    height: 15px;
+    background-color: #fff;
+    border-radius: 50% / 10px;
+    box-shadow: 0 0 25px 5px rgba(255, 255, 255, 0.7);
+    color: #1a1d23;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-align: center;
+    line-height: 15px; /* Alinea el texto verticalmente */
 }
 
-.seats-grid { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.seat-row { display: flex; align-items: center; gap: 10px; }
-.row-letter { width: 20px; text-align: right; color: var(--text-secondary); }
+.seats-grid {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.seat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.row-letter {
+    width: 20px;
+    text-align: center;
+    color: #888;
+}
+
+/* Estilo individual de cada ASIENTO */
 .seat {
-  width: 30px; height: 30px;
-  background-color: #444;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 0.8rem;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
 }
-.seat.disponible:hover { background-color: #666; }
-.seat.seleccionado { background-color: var(--primary-accent); }
-.seat.ocupado { background-color: var(--background-dark); cursor: not-allowed; border: 1px solid var(--border-color); }
 
-.leyenda { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; }
-.leyenda-item { display: flex; align-items: center; gap: 0.5rem; }
-.leyenda-item .seat { cursor: default; }
+/* Estado: DISPONIBLE */
+.seat.disponible {
+    background-color: #353941;
+    color: #a0a8b8;
+}
+.seat.disponible:hover {
+    background-color: #4a505c;
+    transform: scale(1.1);
+}
 
+/* Estado: SELECCIONADO (con animación) */
+@keyframes select-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); box-shadow: 0 0 15px #00aaff; }
+    100% { transform: scale(1.1); box-shadow: 0 0 10px #00aaff; }
+}
+
+.seat.seleccionado {
+    background-color: #007bff;
+    color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px #00aaff;
+    animation: select-pop 0.3s ease-out;
+}
+
+/* Estado: OCUPADO */
+.seat.ocupado {
+    background-color: #22252a;
+    color: #4a505c;
+    cursor: not-allowed;
+    position: relative;
+    overflow: hidden; /* Para contener la línea diagonal */
+}
+/* Línea diagonal para asientos ocupados */
+.seat.ocupado::after {
+    content: '';
+    position: absolute;
+    width: 120%;
+    height: 2px;
+    background-color: #4a505c;
+    transform: rotate(-45deg);
+}
+
+/* --- Leyenda --- */
+.leyenda {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.leyenda-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #a0a8b8;
+}
+.leyenda-item .seat {
+    cursor: default; /* Quita el cursor de puntero en la leyenda */
+    transform: none !important;
+}
+
+/* --- Resumen de Compra y Botón Final --- */
 .reserva-summary {
-  background-color: var(--background-light);
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 400px;
-  margin: 2rem auto;
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    background: rgba(20, 25, 35, 0.7);
+    border: 1px solid #3a3f4a;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    text-align: center;
 }
-.reserva-summary h4 { margin-top: 0; font-size: 1.5rem; }
-.reserva-summary button { width: 100%; font-size: 1.2rem; margin-top: 1rem; }
-.reserva-summary button:disabled { background-color: #555; cursor: not-allowed; }
+
+.reserva-summary h4 {
+    margin-top: 0;
+    font-size: 1.5rem;
+}
+
+.reserva-summary p {
+    color: #c5c8d0;
+    font-size: 1.1rem;
+}
+
+.reserva-summary button {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reserva-summary button:not(:disabled) {
+    background: linear-gradient(90deg, #007bff 0%, #00aaff 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.reserva-summary button:not(:disabled):hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+}
+
+.reserva-summary button:disabled {
+    background-color: #353941;
+    color: #888;
+    cursor: not-allowed;
+}

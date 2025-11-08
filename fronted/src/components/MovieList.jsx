@@ -70,7 +70,7 @@ function MovieList() {
 
     return (
         <div className="movielist-container">
-            <h1>En Cartelera</h1>
+            <h1>Cartelera</h1>
 
             <div className="filters-container">
                 <input

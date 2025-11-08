@@ -1,16 +1,20 @@
-/* /frontend/styles/Navbar.css */
+/* /frontend/styles/Navbar.css (NUEVA VERSIÓN NEÓN Y CINEMATOGRÁFICA) */
 
+/* --- Barra de Navegación Principal --- */
 .navbar {
-    background-color: #1c1c1e;
     height: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     position: sticky;
     top: 0;
     z-index: 999;
-    border-bottom: 1px solid #333;
+    
+    /* Efecto de cristal esmerilado para un look moderno */
+    background: rgba(20, 25, 35, 0.7);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #3a3f4a;
 }
 
 .navbar-container {
@@ -19,19 +23,27 @@
     align-items: center;
     height: 80px;
     width: 100%;
-    max-width: 1200px;
-    padding: 0 24px;
+    max-width: 1300px;
+    padding: 0 2rem;
 }
 
+/* --- Logo con Efecto Neón --- */
 .navbar-logo {
     color: #fff;
-    justify-self: start;
     cursor: pointer;
     text-decoration: none;
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px rgba(0, 170, 255, 0.8), 0 0 10px rgba(0, 170, 255, 0.6);
 }
 
+.navbar-logo:hover {
+    text-shadow: 0 0 10px rgba(0, 170, 255, 1), 0 0 20px rgba(0, 170, 255, 0.8);
+}
+
+/* --- Menú de Navegación --- */
 .nav-menu {
     display: flex;
     align-items: center;
@@ -47,31 +59,60 @@
     align-items: center;
 }
 
+/* --- Enlaces del Menú con Subrayado Animado --- */
 .nav-links {
-    color: #fff;
+    color: #c5c8d0; /* Un blanco más suave */
     text-decoration: none;
-    padding: 0.5rem 1rem;
-    transition: all 0.2s ease-out;
+    padding: 0.5rem 1.2rem;
+    position: relative; /* Necesario para el pseudo-elemento */
+    transition: color 0.3s ease-out;
+}
+
+.nav-links::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 1.5rem; /* Ajusta la posición vertical del subrayado */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #00aaff;
+    transition: width 0.3s ease-out;
 }
 
 .nav-links:hover {
-    color: #00e0e0;
+    color: #fff;
 }
 
+.nav-links:hover::after {
+    width: 80%; /* Anima el ancho del subrayado */
+}
+
+/* Consejo Pro: Si usas NavLink de react-router-dom, puedes estilizar el enlace activo así: */
+.nav-links.active {
+    color: #00aaff;
+    font-weight: 600;
+}
+
+/* --- Botones con Estilo "Ghost" y Neón --- */
 .nav-button {
-    padding: 8px 20px;
-    border-radius: 4px;
+    padding: 10px 22px;
+    border-radius: 8px;
     outline: none;
-    border: none;
+    border: 2px solid #00aaff;
     cursor: pointer;
-    background-color: #007bff;
-    color: white;
+    background-color: transparent;
+    color: #00aaff;
     font-size: 1rem;
-    margin-left: 1rem;
-    transition: background-color 0.2s ease-out;
+    font-weight: 600;
+    margin-left: 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
 }
 
 .nav-button:hover {
-    background-color: #0056b3;
+    background-color: #00aaff;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.7);
 }
-
