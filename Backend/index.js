@@ -214,5 +214,29 @@ app.post('/api/funciones', [verifyToken, checkAdmin], async (req, res) => { cons
 app.put('/api/funciones/:id', [verifyToken, checkAdmin], async (req, res) => { const { id } = req.params; const { pelicula_id, sala_id, fecha_hora, precio_boleto } = req.body; const { rows } = await pool.query('UPDATE Funciones SET pelicula_id = $1, sala_id = $2, fecha_hora = $3, precio_boleto = $4 WHERE id = $5 RETURNING *', [pelicula_id, sala_id, fecha_hora, precio_boleto, id]); res.json({ message: "Función actualizada.", data: rows[0] }); });
 app.delete('/api/funciones/:id', [verifyToken, checkAdmin], async (req, res) => { await pool.query('DELETE FROM Funciones WHERE id = $1', [req.params.id]); res.status(200).json({ message: 'Función eliminada.' }); });
 
+app.put('/api/usuarios/:id/cambiar-rol', [verifyToken, checkAdmin], async (req, res) => {
+    const { id } = req.params; // El ID del usuario a modificar
+    const { rol } = req.body;   // El nuevo rol que enviaremos desde Postman
+
+    // Validación simple para asegurarnos de que el rol es uno de los permitidos
+    if (!rol || (rol !== 'cliente' && rol !== 'administrador')) {
+        return res.status(400).json({ error: "Rol no válido. Debe ser 'cliente' o 'administrador'." });
+    }
+
+    try {
+        const query = 'UPDATE Usuarios SET rol = $1 WHERE id = $2 RETURNING id, nombre, email, rol';
+        const { rows } = await pool.query(query, [rol, id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "Usuario no encontrado." });
+        }
+
+        res.json({ message: "Rol de usuario actualizado con éxito.", usuario: rows[0] });
+
+    } catch (error) {
+        console.error("Error al cambiar el rol del usuario:", error);
+        res.status(500).json({ error: "Error interno del servidor." });
+    }
+});
 // --- 5. INICIAR SERVIDOR ---
 app.listen(PORT, () => { console.log(`Servidor corriendo en http://localhost:${PORT}`); });
