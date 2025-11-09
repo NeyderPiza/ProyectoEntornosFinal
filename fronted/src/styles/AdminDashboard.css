@@ -108,6 +108,7 @@
     align-items: center;
     z-index: 1000;
     backdrop-filter: blur(5px);
+    padding: 2rem; /* <-- CAMBIO 1: Añadir un poco de espacio */
 }
 
 .modal-content {
@@ -120,6 +121,10 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     border: 1px solid #3a3f4a;
     animation: slideUp 0.3s ease-out;
+
+    /* -- LOS CAMBIOS MÁGICOS -- */
+    max-height: 90vh;  /* <-- CAMBIO 2: Limita la altura al 90% de la ventana */
+    overflow-y: auto; /* <-- CAMBIO 3: Si el contenido se pasa, AÑADE SCROLL */
 }
 
 @keyframes slideUp {
@@ -185,6 +190,7 @@
 }
 
 /* --- Botón Primario (Reutilizado) --- */
+/* (Este bloque no necesita cambios, solo el de abajo) */
 .btn-primary {
     display: inline-block;
     padding: 0.75rem 1.5rem;
@@ -208,4 +214,5 @@
     width: 100%;
     padding: 1rem;
     font-size: 1.1rem;
+    margin-top: 1rem; /* <-- CAMBIO 4: Añadir espacio sobre el botón */
 }
