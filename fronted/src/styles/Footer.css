@@ -1,0 +1,88 @@
+/* /frontend/styles/Footer.css */
+
+.footer-container {
+    background-color: #0d1117; /* Un negro casi puro, muy elegante */
+    color: #a0a8b8;
+    padding: 4rem 2rem 1.5rem;
+    border-top: 1px solid #3a3f4a;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.footer-content {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.footer-section h3 {
+    color: #fff;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.footer-logo {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px rgba(0, 170, 255, 0.8);
+}
+
+.footer-section p {
+    line-height: 1.8;
+}
+
+.footer-section.links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section.links a {
+    color: #a0a8b8;
+    text-decoration: none;
+    display: inline-block; /* Permite el uso de ::after */
+    position: relative;
+    margin-bottom: 0.75rem;
+    transition: color 0.3s ease;
+}
+
+.footer-section.links a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background-color: #00aaff;
+    transition: width 0.3s ease-out;
+}
+
+.footer-section.links a:hover {
+    color: #00aaff;
+}
+
+.footer-section.links a:hover::after {
+    width: 100%;
+}
+
+.social-icons a {
+    color: #a0a8b8;
+    font-size: 1.6rem;
+    margin-right: 1.8rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: #00aaff;
+    transform: scale(1.2);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid #3a3f4a;
+    font-size: 0.9rem;
+}

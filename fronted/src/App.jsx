@@ -15,6 +15,7 @@ import AdminRoute from './components/AdminRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicNavbar from './components/PublicNavbar';
 import AuthLayout from './components/layouts/AuthLayout';
+import Footer from './components/Footer'; 
 
 // Tu PublicLayout está perfecto. La <PublicNavbar> va aquí y el contenido
 // de cada página se renderiza en el <Outlet />.
@@ -24,6 +25,7 @@ const PublicLayout = () => (
         <main className="content-container">
             <Outlet />
         </main>
+        <Footer />
     </>
 );
 
