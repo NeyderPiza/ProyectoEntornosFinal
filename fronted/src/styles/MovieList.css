@@ -1,59 +1,157 @@
-/* /frontend/src/styles/MovieList.css */
+/* /frontend/styles/MovieList.css (NUEVA VERSIÓN NEÓN Y MODERNA) */
 
-.movie-grid-container {
-  padding-bottom: 2rem;
+/* --- Contenedor Principal con Fondo Gradiente --- */
+.movielist-container {
+    width: 100%;
+    max-width: 1300px; /* Un poco más de espacio */
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* Fondo oscuro con un sutil gradiente azulado desde arriba */
+    background: linear-gradient(180deg, #0f1722 0%, #0d1117 100%);
+    border-radius: 16px; /* Bordes redondeados para que el brillo se vea mejor */
+    border: 1px solid #3a3f4a; /* Un borde sutil */
+    box-shadow: 0 0 40px rgba(0, 170, 255, 0.25); /* El brillo de neón principal */
+
 }
 
-.movie-grid-container h2 {
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  color: var(--text-primary);
-  border-bottom: 2px solid var(--primary-accent);
-  padding-bottom: 1rem;
+/* --- Título Principal Animado con Efecto Neón --- */
+@keyframes neon-flicker {
+    0%, 100% {
+        text-shadow: 0 0 5px #00aaff, 0 0 10px #00aaff, 0 0 20px #00aaff, 0 0 40px #007bff, 0 0 80px #007bff;
+        opacity: 1;
+    }
+    50% {
+        text-shadow: 0 0 4px #00aaff, 0 0 8px #00aaff, 0 0 15px #00aaff, 0 0 30px #007bff, 0 0 60px #007bff;
+        opacity: 0.95;
+    }
 }
 
+.movielist-container h1 {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2.5rem;
+    animation: neon-flicker 3s infinite alternate; /* Aplicamos la animación */
+}
+
+/* --- Contenedor de Filtros con Estilo de Panel de Control --- */
+.filters-container {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    padding: 1.5rem;
+    background-color: rgba(20, 25, 35, 0.5);
+    border-radius: 12px;
+    border: 1px solid #3a3f4a;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px);
+}
+
+.search-input,
+.city-select {
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #4a505c;
+    background-color: #1a1d23;
+    color: #e0e0e0;
+    transition: all 0.2s ease;
+}
+
+.search-input {
+    width: 100%;
+    max-width: 450px;
+}
+
+.city-select {
+    min-width: 220px;
+}
+
+.search-input:focus,
+.city-select:focus {
+    outline: none;
+    border-color: #00aaff;
+    box-shadow: 0 0 0 4px rgba(0, 170, 255, 0.2);
+}
+
+/* --- Grid de Películas --- */
 .movie-grid {
-  display: grid;
-  /* Crea columnas automáticas que tengan al menos 280px de ancho */
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2.5rem; /* Espacio entre las tarjetas */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Tarjetas un poco más grandes */
+    gap: 2rem; /* Más espaciado */
 }
 
+/* --- Tarjeta de Película con Efecto Hover --- */
 .movie-card {
-  background-color: var(--background-light);
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #1c1f26;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: white;
+    border: 1px solid transparent;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    position: relative;
 }
 
 .movie-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 10px 30px rgba(0, 123, 255, 0.2);
+    transform: translateY(-10px);
+    border-color: #00aaff;
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.4), 0 0 40px rgba(0, 170, 255, 0.2);
 }
 
-.movie-card-poster img {
-  width: 100%;
-  height: 420px;
-  object-fit: cover; /* Asegura que la imagen cubra el espacio sin deformarse */
-  display: block;
+.movie-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
-.movie-card-content {
-  padding: 1.5rem;
+.movie-card img {
+    width: 100%;
+    height: 330px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
 }
 
-.movie-card-content h3 {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-  font-size: 1.4rem;
-  color: var(--text-primary);
+.movie-card:hover img {
+    transform: scale(1.05);
 }
 
-.movie-card-content p {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  line-height: 1.6;
+.movie-card-title {
+    padding: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    min-height: 80px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0; /* Oculto por defecto */
+    transition: opacity 0.3s ease;
 }
-.movie-card-link { text-decoration: none; }
+
+.movie-card:hover .movie-card-title {
+    opacity: 1; /* Aparece al hacer hover */
+}
+
+/* --- Mensaje de "No Resultados" --- */
+.no-results {
+    text-align: center;
+    padding: 4rem;
+    background-color: #1c1f26;
+    border-radius: 12px;
+    color: #a0a8b8;
+    border: 1px dashed #3a3f4a;
+}
+
+.no-results p {
+    margin: 0;
+    font-size: 1.2rem;
+}

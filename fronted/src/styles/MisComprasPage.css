@@ -1,0 +1,66 @@
+/* /frontend/styles/MisComprasPage.css */
+
+.mis-compras-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.mis-compras-container h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #eee;
+}
+
+.compras-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.compra-card {
+    background-color: #2a2a2e;
+    border-left: 5px solid #00c2c2; /* Un acento de color */
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out;
+}
+
+.compra-card:hover {
+    transform: translateY(-5px);
+}
+
+.compra-card h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #00e0e0;
+}
+
+.compra-details p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+    color: #ccc;
+}
+
+.compra-details strong {
+    color: #fff;
+}
+
+.compra-fecha {
+    font-size: 0.85rem;
+    color: #888;
+    text-align: right;
+    margin-top: 1rem;
+}
+
+.no-compras {
+    text-align: center;
+    background-color: #2a2a2e;
+    padding: 3rem;
+    border-radius: 8px;
+}
+
+.no-compras p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}

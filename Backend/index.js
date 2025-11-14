@@ -6,6 +6,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
+const { sendConfirmationEmail } = require('./services/emailService');
 
 const { verifyToken, checkAdmin } = require('./middleware/auth');
 
@@ -52,32 +53,70 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // --- 2. API PÚBLICA (para clientes) ---
-app.get('/api/peliculas', async (req, res) => { try { const { rows } = await pool.query('SELECT * FROM Peliculas ORDER BY titulo ASC'); res.json(rows); } catch (e) { res.status(500).json({ error: 'Error al obtener películas.'})}});
+
 app.get('/api/peliculas/:id', async (req, res) => { try { const { rows } = await pool.query('SELECT * FROM Peliculas WHERE id = $1', [req.params.id]); if(rows.length === 0) return res.status(404).json({error: 'Película no encontrada'}); res.json(rows[0]); } catch (e) { res.status(500).json({ error: 'Error al obtener película.'})}});
 app.get('/api/peliculas/:id/funciones', async (req, res) => { try { const query = `SELECT f.id, f.fecha_hora, f.precio_boleto, s.nombre AS sala_nombre, c.nombre AS ciudad_nombre FROM Funciones f JOIN Salas s ON f.sala_id = s.id JOIN Ciudades c ON s.ciudad_id = c.id WHERE f.pelicula_id = $1 AND f.fecha_hora > NOW() ORDER BY c.nombre, f.fecha_hora ASC;`; const { rows } = await pool.query(query, [req.params.id]); res.json(rows); } catch (e) { res.status(500).json({ error: 'Error al obtener funciones.'})}});
 app.get('/api/funciones/:id/detalles', async (req, res) => { try { const fQuery = `SELECT f.id, f.fecha_hora, f.precio_boleto, p.titulo AS pelicula_titulo, p.url_poster, s.nombre AS sala_nombre, s.filas, s.columnas FROM Funciones f JOIN Peliculas p ON f.pelicula_id = p.id JOIN Salas s ON f.sala_id = s.id WHERE f.id = $1;`; const fRes = await pool.query(fQuery, [req.params.id]); if(fRes.rows.length === 0) return res.status(404).json({error: 'Función no encontrada'}); const aQuery = 'SELECT fila, numero FROM Asientos_Reservados WHERE funcion_id = $1'; const aRes = await pool.query(aQuery, [req.params.id]); res.json({ funcion: fRes.rows[0], asientosOcupados: aRes.rows }); } catch (e) { res.status(500).json({ error: 'Error al obtener detalles de función.'})}});
+app.get('/api/peliculas', async (req, res) => { 
+    try {
+        const { ciudadId } = req.query; // Leemos el parámetro de consulta ?ciudadId=
+        let query = '';
+        let params = [];
 
+        if (ciudadId) {
+            // Si nos piden una ciudad específica, la consulta es más compleja.
+            // Selecciona solo las películas (DISTINCT) que tienen al menos una función
+            // en una sala de la ciudad especificada.
+            query = `
+                SELECT DISTINCT p.* 
+                FROM Peliculas p
+                JOIN Funciones f ON p.id = f.pelicula_id
+                JOIN Salas s ON f.sala_id = s.id
+                WHERE s.ciudad_id = $1 AND f.fecha_hora > NOW()
+                ORDER BY p.titulo ASC
+            `;
+            params = [ciudadId];
+        } else {
+            // Si no se especifica ciudad, devolvemos todas las películas como antes.
+            query = 'SELECT * FROM Peliculas ORDER BY titulo ASC';
+        }
+
+        const { rows } = await pool.query(query, params);
+        res.json(rows);
+
+    } catch (e) { 
+        console.error("Error al obtener películas:", e);
+        res.status(500).json({ error: 'Error al obtener películas.' });
+    }
+});
+
+app.get('/api/ciudades-publicas', async (req, res) => {
+    try {
+        const { rows } = await pool.query('SELECT * FROM Ciudades ORDER BY nombre ASC');
+        res.json(rows);
+    } catch (e) {
+        res.status(500).json({ error: 'Error al obtener las ciudades.' });
+    }
+});
 // --- 3. API PROTEGIDA (para usuarios logueados) ---
 // ¡¡¡AQUÍ ESTÁ LA CORRECCIÓN!!!
 app.post('/api/reservas', verifyToken, async (req, res) => {
-    const usuarioId = req.user.id; // Obtenemos el ID del usuario desde el token decodificado
+    const usuarioId = req.user.id;
     const { funcionId, asientos, totalPagado } = req.body;
 
     if (!funcionId || !asientos || asientos.length === 0) {
         return res.status(400).json({ error: "Faltan datos para la reserva." });
     }
 
-    const client = await pool.connect(); // Usamos una transacción para asegurar la integridad de los datos
+    const client = await pool.connect();
 
     try {
         await client.query('BEGIN');
         
-        // 1. Insertar la compra principal
         const compraQuery = 'INSERT INTO Compras (usuario_id, funcion_id, total_pagado) VALUES ($1, $2, $3) RETURNING id';
         const compraResult = await client.query(compraQuery, [usuarioId, funcionId, totalPagado]);
         const compraId = compraResult.rows[0].id;
         
-        // 2. Insertar cada asiento reservado, asociado a la compra
         const asientoQuery = 'INSERT INTO Asientos_Reservados (compra_id, funcion_id, fila, numero) VALUES ($1, $2, $3, $4)';
         for (const asiento of asientos) {
             const fila = asiento.charAt(0);
@@ -85,15 +124,45 @@ app.post('/api/reservas', verifyToken, async (req, res) => {
             await client.query(asientoQuery, [compraId, funcionId, fila, numero]);
         }
 
-        await client.query('COMMIT'); // Si todo sale bien, confirmamos la transacción
+        await client.query('COMMIT');
+        
+        // Enviamos la respuesta de éxito ANTES de intentar mandar el correo.
+        // Esto asegura que el frontend deje de "Procesar..." inmediatamente.
         res.status(201).json({ message: "Reserva realizada con éxito.", compraId: compraId });
+        
+        // AHORA, intentamos enviar el correo de forma asíncrona "en segundo plano".
+        // Si esto falla, el usuario no se verá afectado.
+        try {
+            const infoQuery = `
+                SELECT u.email, p.titulo, f.fecha_hora, s.nombre as sala_nombre
+                FROM Compras c JOIN Usuarios u ON c.usuario_id = u.id JOIN Funciones f ON c.funcion_id = f.id
+                JOIN Peliculas p ON f.pelicula_id = p.id JOIN Salas s ON f.sala_id = s.id
+                WHERE c.id = $1
+            `;
+            const infoResult = await pool.query(infoQuery, [compraId]);
+            const details = infoResult.rows[0];
+
+            const compraDetails = {
+                userEmail: details.email, peliculaTitulo: details.titulo, fechaFuncion: details.fecha_hora,
+                salaNombre: details.sala_nombre, asientos: asientos, totalPagado: totalPagado
+            };
+            
+            sendConfirmationEmail(compraDetails); // No usamos 'await' para que no bloquee
+
+        } catch (emailError) {
+            console.error("El envío de email post-compra falló:", emailError);
+        }
 
     } catch (error) {
-        await client.query('ROLLBACK'); // Si algo falla, revertimos todos los cambios
+        await client.query('ROLLBACK');
         console.error("Error en la transacción de reserva:", error);
-        res.status(500).json({ error: "No se pudo procesar la reserva." });
+        // Asegúrate de enviar una respuesta también en caso de error
+        if (!res.headersSent) {
+            res.status(500).json({ error: "No se pudo procesar la reserva." });
+        }
     } finally {
-        client.release(); // Liberamos la conexión
+        // Esta línea es CRUCIAL. Se asegura de que la conexión a la BD siempre se libere.
+        client.release();
     }
 });
 
@@ -145,5 +214,29 @@ app.post('/api/funciones', [verifyToken, checkAdmin], async (req, res) => { cons
 app.put('/api/funciones/:id', [verifyToken, checkAdmin], async (req, res) => { const { id } = req.params; const { pelicula_id, sala_id, fecha_hora, precio_boleto } = req.body; const { rows } = await pool.query('UPDATE Funciones SET pelicula_id = $1, sala_id = $2, fecha_hora = $3, precio_boleto = $4 WHERE id = $5 RETURNING *', [pelicula_id, sala_id, fecha_hora, precio_boleto, id]); res.json({ message: "Función actualizada.", data: rows[0] }); });
 app.delete('/api/funciones/:id', [verifyToken, checkAdmin], async (req, res) => { await pool.query('DELETE FROM Funciones WHERE id = $1', [req.params.id]); res.status(200).json({ message: 'Función eliminada.' }); });
 
+app.put('/api/usuarios/:id/cambiar-rol', [verifyToken, checkAdmin], async (req, res) => {
+    const { id } = req.params; // El ID del usuario a modificar
+    const { rol } = req.body;   // El nuevo rol que enviaremos desde Postman
+
+    // Validación simple para asegurarnos de que el rol es uno de los permitidos
+    if (!rol || (rol !== 'cliente' && rol !== 'administrador')) {
+        return res.status(400).json({ error: "Rol no válido. Debe ser 'cliente' o 'administrador'." });
+    }
+
+    try {
+        const query = 'UPDATE Usuarios SET rol = $1 WHERE id = $2 RETURNING id, nombre, email, rol';
+        const { rows } = await pool.query(query, [rol, id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "Usuario no encontrado." });
+        }
+
+        res.json({ message: "Rol de usuario actualizado con éxito.", usuario: rows[0] });
+
+    } catch (error) {
+        console.error("Error al cambiar el rol del usuario:", error);
+        res.status(500).json({ error: "Error interno del servidor." });
+    }
+});
 // --- 5. INICIAR SERVIDOR ---
 app.listen(PORT, () => { console.log(`Servidor corriendo en http://localhost:${PORT}`); });

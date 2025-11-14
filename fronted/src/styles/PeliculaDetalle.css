@@ -1,29 +1,161 @@
-/* /frontend/src/styles/PeliculaDetalle.css */
+/* /frontend/styles/PeliculaDetalle.css (NUEVA VERSIÓN NEÓN Y CINEMATOGRÁFICA) */
 
-.detalle-container { color: var(--text-primary); }
-.detalle-header { display: flex; gap: 3rem; margin-bottom: 3rem; }
-.detalle-poster img { width: 300px; border-radius: 8px; box-shadow: 0 5px 25px rgba(0,0,0,0.3); }
-.detalle-info h1 { font-size: 3rem; margin-top: 0; margin-bottom: 1.5rem; color: var(--primary-accent); }
-.detalle-info .sinopsis { font-size: 1.1rem; line-height: 1.7; color: var(--text-secondary); max-width: 80ch; }
-.info-tags { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin-top: 2rem; font-size: 0.9rem; }
-.info-tags span { background-color: var(--background-light); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid var(--border-color); }
-
-.funciones-section { margin-top: 4rem; }
-.funciones-section h2 { font-size: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 2rem; }
-.ciudad-group { margin-bottom: 2.5rem; }
-.ciudad-group h3 { font-size: 1.5rem; color: var(--primary-accent); margin-bottom: 1.5rem; }
-
-.horarios-grid { display: flex; flex-wrap: wrap; gap: 1rem; }
-.horario-box {
-  background-color: var(--background-light);
-  border: 1px solid var(--border-color);
-  padding: 1rem 1.5rem;
-  border-radius: 5px;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.2s ease;
+/* --- Contenedor Principal --- */
+.detalle-container {
+    max-width: 1200px;
+    margin: 3rem auto;
+    padding: 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #e0e0e0;
 }
-.horario-box:hover { background-color: var(--primary-accent); border-color: var(--primary-accent); transform: translateY(-3px); }
-.horario-box .hora { display: block; font-size: 1.2rem; font-weight: bold; color: var(--text-primary); }
-.horario-box .sala { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem; }
-.horario-box:hover .hora, .horario-box:hover .sala { color: white; }
+
+/* --- Hero Section (El gran cambio visual) --- */
+.detalle-header {
+    position: relative;
+    display: grid;
+    grid-template-columns: 300px 1fr; /* Columna fija para el póster */
+    gap: 2.5rem;
+    padding: 3rem;
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: rgba(26, 29, 35, 0.7); /* Fondo de cristal */
+    border: 1px solid #3a3f4a;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    backdrop-filter: blur(10px);
+}
+
+/* --- Fondo Atmosférico (REQUIERE UN PEQUEÑO CAMBIO EN JSX) --- */
+.detalle-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: var(--poster-bg-url); /* Variable que se setea desde React */
+    background-size: cover;
+    background-position: center;
+    filter: blur(30px) brightness(0.5) saturate(1.1);
+    transform: scale(1.15); /* Asegura que no haya bordes borrosos */
+    z-index: -1; /* Se coloca detrás de todo el contenido */
+}
+
+.detalle-poster img {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transition: transform 0.3s ease;
+}
+
+.detalle-poster img:hover {
+    transform: scale(1.05);
+}
+
+/* --- Información de la Película --- */
+.detalle-info h1 {
+    font-size: 3.5rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 0 0 15px rgba(0, 170, 255, 0.7);
+}
+
+.detalle-info .sinopsis {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #c5c8d0;
+    max-width: 75ch; /* Limita el ancho para mejor legibilidad */
+}
+
+/* Detalles como "Píldoras" o "Tags" */
+.info-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.info-tags span {
+    background-color: rgba(42, 42, 46, 0.8);
+    color: #e0e0e0;
+    padding: 0.6rem 1.1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    border: 1px solid #4a505c;
+    transition: all 0.2s ease;
+}
+
+.info-tags span:hover {
+    background-color: #00aaff;
+    color: #fff;
+    border-color: #00aaff;
+}
+
+/* --- Sección de Horarios --- */
+.funciones-section {
+    margin-top: 4rem;
+    padding-top: 2rem;
+}
+
+.funciones-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 2.5rem;
+    font-weight: 600;
+    color: #00aaff;
+    text-shadow: 0 0 15px rgba(0, 170, 255, 0.5);
+}
+
+.ciudad-group {
+    margin-bottom: 2.5rem;
+}
+
+.ciudad-group h3 {
+    font-size: 1.8rem;
+    color: #e0e0e0;
+    border-bottom: 2px solid #3a3f4a;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.horarios-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* --- Botones de Horario Interactivos --- */
+.horario-box {
+    background-color: #2c2f36;
+    border: 1px solid #4a505c;
+    padding: 0.8rem 1.6rem;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.horario-box:hover {
+    background-color: #007bff;
+    border-color: #00aaff;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.horario-box .hora {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+    transition: color 0.2s ease;
+}
+
+.horario-box .sala {
+    display: block;
+    font-size: 0.8rem;
+    color: #a0a8b8;
+    margin-top: 0.25rem;
+    transition: color 0.2s ease;
+}
+
+.horario-box:hover .hora, .horario-box:hover .sala {
+    color: #fff;
+}
