@@ -1,4 +1,4 @@
-// /frontend/src/components/AdminDashboard.jsx (VERSIÓN FINAL, CORREGIDA Y COMPLETA)
+// /frontend/src/components/AdminDashboard.jsx (TU CÓDIGO ORIGINAL + CORRECCIÓN DE TIMEZONE)
 
 import React, { useState, useEffect, useCallback } from 'react';
 import apiClient from '../api/axiosConfig.js';
@@ -51,9 +51,7 @@ function AdminDashboard() {
         setModalState({ isOpen: false, type: null, data: null });
     };
 
-    // --- LÓGICA DE GUARDADO Y BORRADO CORREGIDA ---
     const getEndpointForType = (type) => {
-        // CORRECCIÓN CLAVE: Mapeamos el tipo singular al endpoint plural correcto.
         const typeMap = {
             'ciudad': 'ciudades',
             'sala': 'salas',
@@ -94,10 +92,17 @@ function AdminDashboard() {
         }
     };
 
+    // --- 1. MODIFICACIÓN EN handleModalChange ---
     const handleModalChange = (e) => {
+        const { name, value } = e.target;
+        
+        // Si el campo es 'fecha_hora', conviértelo a formato ISO UTC antes de guardarlo en el estado.
+        // Si no, guárdalo normalmente.
+        const finalValue = name === 'fecha_hora' ? new Date(value).toISOString() : value;
+
         setModalState(prevState => ({
             ...prevState,
-            data: { ...prevState.data, [e.target.name]: e.target.value }
+            data: { ...prevState.data, [name]: finalValue }
         }));
     };
 
@@ -105,7 +110,17 @@ function AdminDashboard() {
         if (!modalState.isOpen) return null;
         const { data, type } = modalState;
         const title = `${data.id ? 'Editar' : 'Añadir'} ${type.charAt(0).toUpperCase() + type.slice(1)}`;
-        const formatForInput = (iso) => iso ? new Date(new Date(iso).getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : '';
+
+        // --- 2. MODIFICACIÓN EN formatForInput ---
+        // Esta función ahora convierte la fecha UTC de la base de datos a un formato
+        // que el input "datetime-local" entiende, ajustado a la zona horaria del navegador.
+        const formatForInput = (isoString) => {
+            if (!isoString) return '';
+            const date = new Date(isoString);
+            const offset = date.getTimezoneOffset();
+            const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+            return localDate.toISOString().slice(0, 16);
+        };
 
         return (
             <div className="modal-container">
