@@ -2,10 +2,11 @@ code
 Markdown
 # NBL Cinemax - Plataforma Web de Cine Full-Stack 
 Autores
-Brayan Yecid Aparicio Goyeneche
-Neider Alirio Piza Basto
-Leider Joanny Esteban Lozano
-GitHub: [@tu-usuario-de-github](https://github.com/NeyderPiza/ProyectoEntornosFinal/tree/main)
+*  Brayan Yecid Aparicio Goyeneche
+*  Neider Alirio Piza Basto
+*  Leider Joanny Esteban Lozano
+
+*  GitHub: [https://github.com/NeyderPiza/ProyectoEntornosFinal/tree/rama3]
 
 ![Captura de pantalla de la Cartelera de NBL Cinemax](/image.png)
 ## Introducción
