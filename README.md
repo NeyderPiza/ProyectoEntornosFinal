@@ -1,5 +1,4 @@
-code
-Markdown
+
 # NBL Cinemax - Plataforma Web de Cine Full-Stack 
 Autores
 *  Brayan Yecid Aparicio Goyeneche
